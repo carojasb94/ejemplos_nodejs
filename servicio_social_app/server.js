@@ -1,15 +1,29 @@
 
 
+/* Exportando el paquete http */
 var http = require("http");
 
+/* Exportando el paquete urls */
+var url = require("url");
 
-http.createServer(function(request, response) {
-    console.log("Peticion")
+function iniciar(router, handle) {
+  /*
+  router: funcion encargada de rutear las peticiones
+  handle: encargado de manipular las peticiones
+   */
+  function onRequest(request, response) {
+    var pathname = url.parse(request.url).pathname;
+    console.log("Petición para " + pathname + " recibida.");
+    var content = router(handle, pathname)
     response.writeHead(200, {"Content-Type": "text/html"});
-    response.write("Hola Mundo");
+    response.write(content);
     response.end();
-}).listen(8888);
+  }
 
-console.log("Servidor Iniciado.");
+  http.createServer(onRequest).listen(8888);
+  console.log("Servidor Iniciado.");
+}
 
+/* Exportando la funcion 'iniciar' */
+exports.iniciar = iniciar;
 
